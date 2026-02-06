@@ -8,11 +8,19 @@ const render = () => {
             <div class="icon">${lang.icon}</div>
             <h3>${lang.title}</h3>
             <p>${lang.desc}</p>
-            <button class="btn" onclick="location.href='learn.html?id=${lang.id}'">
+            <button class="btn-link" data-id="${lang.id}">
                 Belajar
             </button>
         </div>
     `).join('');
+
+    // Tambahkan event listener untuk setiap tombol
+    document.querySelectorAll('.btn-link').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const id = e.target.getAttribute('data-id');
+            window.location.href = `learn.html?id=${id}`;
+        });
+    });
 };
 
 render();
