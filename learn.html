@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Learning Session - DevQuiz</title>
+    <title>DevQuiz - Learning & Quiz</title>
     <style>
         :root {
             --primary: #2563eb;
@@ -12,6 +12,7 @@
             --dark: #1e293b;
             --bg: #f8fafc;
             --text-secondary: #64748b;
+            --code-bg: #1e1e1e;
         }
 
         body {
@@ -21,153 +22,121 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             color: var(--dark);
         }
 
         .quiz-container {
             background: white;
             width: 90%;
-            max-width: 480px;
+            max-width: 500px;
             padding: 32px;
             border-radius: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
 
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
+        /* Header & Progress */
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .hearts { color: var(--danger); font-weight: 600; font-size: 1.1rem; }
+        .progress-bar { background: #e2e8f0; height: 8px; border-radius: 4px; margin-bottom: 25px; overflow: hidden; }
+        #progress-fill { background: var(--primary); height: 100%; width: 0%; transition: 0.4s; }
+
+        /* Typography */
+        .title { font-size: 1.5rem; font-weight: 700; margin-bottom: 15px; }
+        .question { font-size: 1.2rem; font-weight: 600; margin-bottom: 20px; line-height: 1.5; }
+        .description { color: var(--text-secondary); text-align: left; line-height: 1.6; margin-bottom: 20px; }
+
+        /* Code Block Style */
+        .code-block {
+            background: var(--code-bg);
+            color: #dcdcaa;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: left;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            white-space: pre;
+            border-left: 4px solid var(--primary);
         }
 
-        .hearts { 
-            color: var(--danger); 
-            font-size: 1.1rem; 
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        
-        .progress-bar {
-            background: #e2e8f0;
-            height: 8px;
-            border-radius: 4px;
-            margin-bottom: 32px;
-            overflow: hidden;
-        }
-
-        #progress-fill {
-            background: var(--primary);
-            height: 100%;
-            width: 0%;
-            transition: width 0.4s ease-out;
-        }
-
-        .question { 
-            font-size: 1.25rem; 
-            margin-bottom: 24px; 
-            font-weight: 600; 
-            line-height: 1.5;
-            min-height: 60px;
-        }
-
-        .options-grid { 
-            display: grid; 
-            gap: 12px; 
-        }
-
-        button.option-btn {
+        /* Buttons */
+        .options-grid { display: grid; gap: 12px; }
+        .option-btn {
             padding: 16px;
             border: 1px solid #e2e8f0;
             border-radius: 12px;
             background: white;
             cursor: pointer;
             font-size: 1rem;
-            font-weight: 500;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            color: var(--dark);
+            transition: all 0.2s;
             text-align: left;
         }
-
-        button.option-btn:hover:not(:disabled) { 
-            background: #f1f5f9; 
-            border-color: var(--primary); 
-        }
-        
-        button:disabled { cursor: not-allowed; }
-
+        .option-btn:hover:not(:disabled) { background: #f1f5f9; border-color: var(--primary); }
         .correct { background: var(--success) !important; color: white !important; border-color: var(--success) !important; }
         .wrong { background: var(--danger) !important; color: white !important; border-color: var(--danger) !important; }
 
-        /* Status Screens */
-        .status-title { font-size: 1.875rem; font-weight: 700; margin-bottom: 8px; }
-        .status-text { color: var(--text-secondary); margin-bottom: 24px; }
-        
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-            padding: 14px;
-            border-radius: 10px;
-            border: none;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-            font-size: 1rem;
-            margin-bottom: 12px;
-        }
-
-        .btn-outline {
-            background: transparent;
-            color: var(--text-secondary);
-            padding: 12px;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            cursor: pointer;
-            width: 100%;
-            font-weight: 500;
-        }
+        .btn-main { background: var(--primary); color: white; padding: 15px; border-radius: 10px; border: none; font-weight: 600; width: 100%; cursor: pointer; margin-top: 10px; }
+        .btn-secondary { background: transparent; color: var(--text-secondary); padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; width: 100%; cursor: pointer; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-<div class="quiz-container" id="quiz-box">
-    <div id="game-ui">
-        <div class="header">
-            <button onclick="location.href='index.html'" style="border:none; background:none; cursor:pointer; color: var(--text-secondary); font-size: 1.5rem;">✕</button>
-            <div class="hearts">❤️ <span id="life-count">3</span></div>
-        </div>
-
-        <div class="progress-bar">
-            <div id="progress-fill"></div>
-        </div>
-
-        <div id="quiz-content">
-            <div class="question" id="question-text">Memuat materi...</div>
-            <div class="options-grid" id="options-container"></div>
-        </div>
+<div class="quiz-container" id="main-content">
     </div>
-</div>
 
 <script type="module">
     import { languages } from './js/data.languages.js';
 
     const params = new URLSearchParams(window.location.search);
     const langId = params.get('lang');
+    const mode = params.get('mode') || 'study'; // Default ke study jika tidak ada mode
     const currentLang = languages.find(l => l.id === langId);
+
+    const mainContainer = document.getElementById('main-content');
 
     if (!currentLang) {
         window.location.href = 'index.html';
     }
 
-    // Ambil 10 soal acak dari bank soal
+    // --- LOGIKA HALAMAN MATERI (STUDY) ---
+    function renderStudyMode() {
+        mainContainer.innerHTML = `
+            <div class="title">📚 Materi ${currentLang.title}</div>
+            <p class="description">${currentLang.desc}</p>
+            <div class="code-block">${currentLang.codeExample}</div>
+            <button class="btn-main" id="start-quiz-btn">Mulai Kuis Sekarang</button>
+            <button class="btn-secondary" onclick="location.href='index.html'">Kembali ke Menu</button>
+        `;
+
+        document.getElementById('start-quiz-btn').onclick = () => {
+            window.location.href = `learn.html?lang=${langId}&mode=quiz`;
+        };
+    }
+
+    // --- LOGIKA HALAMAN KUIS (QUIZ) ---
     let quizData = [...currentLang.quizBank].sort(() => 0.5 - Math.random()).slice(0, 10);
     let currentIdx = 0;
     let lives = 3;
 
-    function renderQuestion() {
+    function renderQuizMode() {
+        mainContainer.innerHTML = `
+            <div class="header">
+                <button onclick="location.href='index.html'" style="border:none; background:none; cursor:pointer; font-size:1.2rem;">✕</button>
+                <div class="hearts">❤️ <span id="life-count">${lives}</span></div>
+            </div>
+            <div class="progress-bar"><div id="progress-fill"></div></div>
+            <div id="quiz-ui">
+                <div class="question" id="question-text"></div>
+                <div class="options-grid" id="options-container"></div>
+            </div>
+        `;
+        showQuestion();
+    }
+
+    function showQuestion() {
         const q = quizData[currentIdx];
         document.getElementById('question-text').innerText = q.q;
         const container = document.getElementById('options-container');
@@ -210,19 +179,19 @@
     function nextQuestion() {
         currentIdx++;
         if (currentIdx < quizData.length) {
-            renderQuestion();
+            showQuestion();
         } else {
             showWin();
         }
     }
 
     function showGameOver() {
-        document.getElementById('quiz-box').innerHTML = `
-            <div style="font-size: 3rem; margin-bottom: 16px;">❌</div>
-            <div class="status-title">Game Over</div>
-            <p class="status-text">Maaf, Anda kehabisan nyawa dalam sesi ini.</p>
-            <button class="btn-primary" onclick="location.reload()">COBA LAGI</button>
-            <button class="btn-outline" onclick="location.href='index.html'">KEMBALI KE HOME</button>
+        mainContainer.innerHTML = `
+            <div style="font-size: 3rem; margin-bottom: 10px;">❌</div>
+            <div class="title">Game Over</div>
+            <p class="description" style="text-align:center;">Maaf, Anda kehabisan nyawa dalam sesi ini.</p>
+            <button class="btn-main" onclick="location.reload()">Coba Lagi</button>
+            <button class="btn-secondary" onclick="location.href='index.html'">Kembali ke Home</button>
         `;
     }
 
@@ -233,15 +202,20 @@
             localStorage.setItem('devQuiz_user', JSON.stringify(userData));
         }
 
-        document.getElementById('quiz-box').innerHTML = `
-            <div style="font-size: 3rem; margin-bottom: 16px;">🏆</div>
-            <div class="status-title">Luar Biasa!</div>
-            <p class="status-text">Anda berhasil menyelesaikan modul ${currentLang.title}.</p>
-            <button class="btn-primary" style="background: var(--success);" onclick="location.href='index.html'">LANJUTKAN BELAJAR</button>
+        mainContainer.innerHTML = `
+            <div style="font-size: 3rem; margin-bottom: 10px;">🏆</div>
+            <div class="title">Luar Biasa!</div>
+            <p class="description" style="text-align:center;">Anda telah menguasai modul ${currentLang.title}.</p>
+            <button class="btn-main" style="background: var(--success);" onclick="location.href='index.html'">Lanjut Belajar</button>
         `;
     }
 
-    renderQuestion();
+    // Inisialisasi berdasarkan mode
+    if (mode === 'study') {
+        renderStudyMode();
+    } else {
+        renderQuizMode();
+    }
 </script>
 
 </body>
