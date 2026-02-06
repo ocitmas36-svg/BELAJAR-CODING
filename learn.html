@@ -3,68 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Materi Belajar</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <title>Belajar Materi</title>
     <style>
-        :root { --p: #6366f1; --bg: #0f172a; --card: rgba(255,255,255,0.08); }
-        body { background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; padding: 20px; line-height: 1.6; }
-        .nav { margin-bottom: 20px; }
-        .nav a { color: var(--p); text-decoration: none; font-weight: bold; }
-        .content { background: var(--card); padding: 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); }
-        code { background: #000; color: #4ade80; padding: 15px; display: block; border-radius: 10px; margin: 20px 0; font-family: monospace; overflow-x: auto; white-space: pre; }
-        .btn-done { background: #22c55e; color: white; border: none; padding: 15px; border-radius: 12px; width: 100%; font-weight: bold; font-size: 1rem; cursor: pointer; }
-        .btn-done:disabled { background: #475569; cursor: not-allowed; }
+        :root { --p: #6366f1; --bg: #0f172a; }
+        body { background: var(--bg); color: #fff; font-family: sans-serif; padding: 20px; }
+        .content { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; }
+        code { background: #000; color: #4ade80; display: block; padding: 15px; border-radius: 10px; margin: 15px 0; overflow-x: auto; }
+        .quiz-box { background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; margin-top: 20px; }
+        .opt-btn { display: block; width: 100%; padding: 10px; margin: 5px 0; background: #334155; color: #fff; border: none; border-radius: 5px; text-align: left; }
+        .btn-done { background: #475569; color: #fff; border: none; padding: 15px; border-radius: 10px; width: 100%; margin-top: 20px; font-weight: bold; }
+        .active-done { background: #22c55e !important; }
     </style>
 </head>
 <body>
-    <div class="nav"><a href="index.html">← Kembali</a></div>
-    
-    <div class="content">
-        <h1 id="title" style="margin-top:0;">Memuat...</h1>
-        <p id="desc" style="color: #94a3b8;"></p>
-        
-        <h3 style="margin-bottom:5px;">Contoh Kode:</h3>
-        <code id="code-sample"></code>
+    <a href="index.html" style="color: var(--p); text-decoration: none;">← Kembali</a>
+    <div class="content" style="margin-top: 20px;">
+        <h1 id="title"></h1>
+        <p id="desc"></p>
+        <code><pre id="code-sample"></pre></code>
 
-        <button id="btn-done" class="btn-done">Tandai Selesai (+10 XP)</button>
-        <p id="msg" style="color: #22c55e; text-align: center; display: none; margin-top: 10px;">🎉 Materi selesai!</p>
+        <div class="quiz-box" id="quiz-container">
+            <h4>Quiz:</h4>
+            <p id="question"></p>
+            <div id="options"></div>
+        </div>
+
+        <button id="btn-done" class="btn-done" disabled>Selesaikan Materi</button>
     </div>
 
     <script type="module">
         import { languages } from './js/data.languages.js';
-        
         const params = new URLSearchParams(window.location.search);
         const langId = params.get('id');
         const data = languages.find(l => l.id === langId);
 
         const btn = document.getElementById('btn-done');
-        const msg = document.getElementById('msg');
 
         if (data) {
             document.getElementById('title').innerText = data.icon + " " + data.title;
             document.getElementById('desc').innerText = data.desc;
-            document.getElementById('code-sample').innerText = data.codeExample || "// Contoh kode belum tersedia.";
+            document.getElementById('code-sample').innerText = data.codeExample;
+            document.getElementById('question').innerText = data.quiz.q;
+            
+            document.getElementById('options').innerHTML = data.quiz.options.map((opt, i) => `
+                <button class="opt-btn" onclick="checkAns(${i})">${opt}</button>
+            `).join('');
         }
 
-        // Sistem Progress
+        // Simpan progress ke LocalStorage
         let progress = JSON.parse(localStorage.getItem('devlearn_xp')) || { totalXP: 0, completed: [] };
 
-        if (progress.completed.includes(langId)) {
-            btn.innerText = "Sudah Diselesaikan";
-            btn.disabled = true;
-        }
+        window.checkAns = (i) => {
+            if (i === data.quiz.answer) {
+                alert("Benar! Tombol selesai aktif.");
+                btn.disabled = false;
+                btn.classList.add('active-done');
+            } else {
+                alert("Salah! Coba lagi.");
+            }
+        };
 
-        btn.addEventListener('click', () => {
+        btn.onclick = () => {
             if (!progress.completed.includes(langId)) {
                 progress.totalXP += 10;
                 progress.completed.push(langId);
                 localStorage.setItem('devlearn_xp', JSON.stringify(progress));
-                
-                btn.innerText = "Sudah Diselesaikan";
-                btn.disabled = true;
-                msg.style.display = "block";
             }
-        });
+            location.href = 'index.html';
+        };
+
+        // Jika sudah pernah selesai
+        if (progress.completed.includes(langId)) {
+            btn.disabled = false;
+            btn.classList.add('active-done');
+            btn.innerText = "Sudah Selesai (Kembali)";
+        }
     </script>
 </body>
 </html>
