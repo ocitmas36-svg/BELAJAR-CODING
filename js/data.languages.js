@@ -2,7 +2,9 @@ export const languages = [
   { 
     id: "js", 
     title: "JavaScript", 
-    icon: "🟨", 
+    icon: "🟨",
+    desc: "Bahasa pemrograman paling populer untuk web development.",
+    codeExample: "console.log('Hello World');",
     quizBank: [
         { q: "Simbol komentar satu baris?", options: ["//", "/*", "#"], answer: 0 },
         { q: "Tipe data angka?", options: ["string", "number", "bool"], answer: 1 },
@@ -29,7 +31,9 @@ export const languages = [
   { 
     id: "py", 
     title: "Python", 
-    icon: "🐍", 
+    icon: "🐍",
+    desc: "Bahasa yang sangat ramah pemula untuk Data Science dan AI.",
+    codeExample: "print('Hello World')",
     quizBank: [
         { q: "Keyword fungsi?", options: ["func", "def", "function"], answer: 1 },
         { q: "Output di Python?", options: ["echo", "print()", "printf"], answer: 1 },
@@ -52,10 +56,11 @@ export const languages = [
         { q: "Library Data Science?", options: ["Pandas", "React", "Laravel"], answer: 0 },
         { q: "Cek panjang list?", options: ["size()", "count()", "len()"], answer: 2 }
     ]
-  }
-  
+  },
   { 
     id: "sql", title: "SQL", icon: "🗄️", 
+    desc: "Bahasa standar untuk mengelola basis data relasional.",
+    codeExample: "SELECT * FROM users;",
     quizBank: [
         { q: "Ambil data?", options: ["GET", "SELECT", "EXTRACT"], answer: 1 },
         { q: "Update data?", options: ["SAVE", "UPDATE", "MODIFY"], answer: 1 },
@@ -81,6 +86,8 @@ export const languages = [
   },
   { 
     id: "java", title: "Java", icon: "☕", 
+    desc: "Bahasa tangguh untuk aplikasi enterprise dan Android.",
+    codeExample: "System.out.println('Hello');",
     quizBank: [
         { q: "Output Java?", options: ["System.out.println", "print", "echo"], answer: 0 },
         { q: "Metode utama?", options: ["main", "start", "run"], answer: 0 },
@@ -106,6 +113,8 @@ export const languages = [
   },
   { 
     id: "php", title: "PHP", icon: "🐘", 
+    desc: "Bahasa server-side yang menggerakkan sebagian besar web.",
+    codeExample: "echo 'Hello World';",
     quizBank: [
         { q: "Tanda variabel?", options: ["$", "@", "#"], answer: 0 },
         { q: "Output PHP?", options: ["echo", "print", "Semua Benar"], answer: 2 },
@@ -128,9 +137,11 @@ export const languages = [
         { q: "Filter email?", options: ["filter_var", "validate", "check"], answer: 0 },
         { q: "Koneksi DB?", options: ["mysqli", "pdo", "Keduanya Benar"], answer: 2 }
     ]
-  }
+  },
   { 
     id: "cpp", title: "C++", icon: "💎", 
+    desc: "Bahasa performa tinggi untuk game dan sistem.",
+    codeExample: "cout << 'Hello World';",
     quizBank: [
         { q: "Output standar C++?", options: ["cout", "print", "System.out"], answer: 0 },
         { q: "Input standar C++?", options: ["scanf", "cin", "get"], answer: 1 },
@@ -156,6 +167,8 @@ export const languages = [
   },
   { 
     id: "cs", title: "C#", icon: "🔷", 
+    desc: "Bahasa serbaguna dari Microsoft untuk desktop dan game Unity.",
+    codeExample: "Console.WriteLine('Hello');",
     quizBank: [
         { q: "Output C#?", options: ["Console.WriteLine", "print", "Log"], answer: 0 },
         { q: "Framework utama?", options: [".NET", "JVM", "Laravel"], answer: 0 },
@@ -181,6 +194,8 @@ export const languages = [
   },
   { 
     id: "kt", title: "Kotlin", icon: "🟣", 
+    desc: "Bahasa modern pengganti Java untuk Android.",
+    codeExample: "println('Hello Kotlin')",
     quizBank: [
         { q: "Keyword variabel?", options: ["val/var", "let", "def"], answer: 0 },
         { q: "Variabel read-only?", options: ["val", "var", "const"], answer: 0 },
@@ -203,9 +218,11 @@ export const languages = [
         { q: "Package?", options: ["package", "import", "module"], answer: 0 },
         { q: "Elvis operator?", options: ["?:", "!!", "?."], answer: 0 }
     ]
-  }
-{ 
+  },
+  { 
     id: "swift", title: "Swift", icon: "🍎", 
+    desc: "Bahasa elegan dari Apple untuk iOS dan macOS.",
+    codeExample: "print('Hello Swift')",
     quizBank: [
         { q: "Keyword variabel?", options: ["var", "let", "val"], answer: 0 },
         { q: "Keyword konstanta?", options: ["const", "let", "final"], answer: 1 },
@@ -231,6 +248,8 @@ export const languages = [
   },
   { 
     id: "ruby", title: "Ruby", icon: "💎", 
+    desc: "Bahasa yang fokus pada kesederhanaan dan produktivitas.",
+    codeExample: "puts 'Hello Ruby'",
     quizBank: [
         { q: "Filosofi Ruby?", options: ["Kebahagiaan Programmer", "Kecepatan", "Keamanan"], answer: 0 },
         { q: "Output Ruby?", options: ["puts", "print", "Keduanya Benar"], answer: 2 },
