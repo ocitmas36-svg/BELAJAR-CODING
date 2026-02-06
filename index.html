@@ -3,123 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevLearn - Level Up Your Code</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <title>DevQuiz - Belajar Coding</title>
     <style>
-        :root { 
-            --p: #6366f1; 
-            --bg: #0f172a; 
-            --card: rgba(255,255,255,0.05); 
-            --success: #22c55e;
-        }
-        
-        body { 
-            background: var(--bg); 
-            color: #fff; 
-            font-family: 'Inter', sans-serif; 
-            margin: 0; 
-            padding: 20px; 
+        :root {
+            --primary: #4a90e2;
+            --dark: #2c3e50;
+            --bg: #f0f2f5;
         }
 
-        header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            margin-bottom: 30px;
-            padding: 10px 0;
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            color: var(--dark);
         }
 
-        .xp-badge { 
-            background: var(--p); 
-            padding: 8px 16px; 
-            border-radius: 50px; 
-            font-weight: bold; 
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        header {
+            background: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
 
-        .grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
-            gap: 15px; 
+        .container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1rem;
         }
 
-        .card { 
-            background: var(--card); 
-            border-radius: 18px; 
-            padding: 20px; 
-            text-align: center; 
-            transition: transform 0.2s;
+        .grid-languages {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .lang-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 2px solid transparent;
             position: relative;
-            overflow: hidden;
         }
 
-        .card:active { transform: scale(0.95); }
+        .lang-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            border-color: var(--primary);
+        }
 
-        .icon { font-size: 2.5rem; margin-bottom: 10px; display: block; }
-        
-        h3 { margin: 10px 0; font-size: 1rem; }
+        .lang-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            display: block;
+        }
 
-        .btn { 
-            color: white; 
-            border: none; 
-            padding: 10px; 
-            border-radius: 10px; 
-            width: 100%; 
-            cursor: pointer; 
+        .lang-title {
             font-weight: bold;
-            font-size: 0.8rem;
-            transition: 0.3s;
+            font-size: 1.1rem;
         }
 
-        .status-done {
+        /* Badge jika sudah selesai */
+        .badge-done {
             position: absolute;
             top: 10px;
             right: 10px;
+            background: #2ecc71;
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .is-completed .badge-done {
+            display: block;
+        }
+
+        .stats {
+            margin-top: 10px;
             font-size: 0.8rem;
+            color: #7f8c8d;
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <div>
-            <h1 style="margin:0; font-size: 1.5rem;">DevLearn</h1>
-            <p style="margin:0; font-size: 0.8rem; color: #94a3b8;">Koleksi 15 Bahasa Pemrograman</p>
+<header>
+    <h1>🚀 DevQuiz</h1>
+    <p>Pilih bahasa pemrograman untuk mulai belajar</p>
+</header>
+
+<div class="container">
+    <div class="grid-languages" id="language-list">
         </div>
-        <div class="xp-badge">✨ <span id="total-xp">0</span> XP</div>
-    </header>
+</div>
 
-    <div class="grid" id="container">
-        </div>
+<script type="module">
+    import { languages } from './js/data.languages.js';
 
-    <script type="module">
-        import { languages } from './js/data.languages.js';
+    function initHome() {
+        const listContainer = document.getElementById('language-list');
         
-        // 1. Ambil Progress dari LocalStorage
-        const progress = JSON.parse(localStorage.getItem('devlearn_xp')) || { totalXP: 0, completed: [] };
-        
-        // 2. Tampilkan Total XP
-        document.getElementById('total-xp').innerText = progress.totalXP;
+        // Ambil data progress dari localStorage
+        const userData = JSON.parse(localStorage.getItem('devQuiz_user')) || { completed: [] };
 
-        const container = document.getElementById('container');
-
-        // 3. Render Kartu Bahasa secara Dinamis
-        container.innerHTML = languages.map(lang => {
-            const isDone = progress.completed.includes(lang.id);
+        languages.forEach(lang => {
+            const isDone = userData.completed.includes(lang.id);
             
-            return `
-                <div class="card" style="border: ${isDone ? '2px solid var(--success)' : '1px solid rgba(255,255,255,0.1)'}">
-                    ${isDone ? '<span class="status-done">✅</span>' : ''}
-                    <span class="icon">${lang.icon}</span>
-                    <h3>${lang.title}</h3>
-                    <button class="btn" 
-                        style="background: ${isDone ? '#475569' : 'var(--p)'}"
-                        onclick="location.href='learn.html?id=${lang.id}'">
-                        ${isDone ? 'Lihat Lagi' : 'Mulai Belajar'}
-                    </button>
-                </div>
+            const card = document.createElement('div');
+            card.className = `lang-card ${isDone ? 'is-completed' : ''}`;
+            card.onclick = () => {
+                window.location.href = `learn.html?lang=${lang.id}`;
+            };
+
+            card.innerHTML = `
+                <span class="badge-done">LULUS</span>
+                <span class="lang-icon">${lang.icon}</span>
+                <div class="lang-title">${lang.title}</div>
+                <div class="stats">20 Soal</div>
             `;
-        }).join('');
-    </script>
+
+            listContainer.appendChild(card);
+        });
+    }
+
+    initHome();
+</script>
+
 </body>
 </html>
