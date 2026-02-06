@@ -3,42 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevLearn - 15 Languages</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <title>DevLearn - Home</title>
     <style>
-        :root { --p: #6366f1; --bg: #0f172a; --card: rgba(255,255,255,0.05); }
-        body { background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; margin: 0; padding: 20px; }
-        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .xp-badge { background: var(--p); padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; }
-        .card { background: var(--card); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 15px; text-align: center; }
-        .icon { font-size: 2rem; margin-bottom: 10px; }
-        .btn { background: var(--p); color: white; border: none; padding: 10px; border-radius: 8px; width: 100%; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        :root { --p: #6366f1; --bg: #0f172a; }
+        body { background: var(--bg); color: #fff; font-family: sans-serif; padding: 20px; }
+        .header { display: flex; justify-content: space-between; align-items: center; }
+        .xp-card { background: var(--p); padding: 10px 20px; border-radius: 10px; font-weight: bold; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .card { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; text-align: center; border: 1px solid #334155; }
+        .btn { background: var(--p); color: #fff; border: none; padding: 8px; border-radius: 5px; width: 100%; margin-top: 10px; }
     </style>
 </head>
 <body>
-    <header>
-        <div>
-            <h1 style="margin:0; font-size: 1.4rem;">DevLearn</h1>
-            <p style="margin:0; font-size: 0.8rem; color: #94a3b8;">Level Up Your Coding</p>
-        </div>
-        <div class="xp-badge">XP: <span id="total-xp">0</span></div>
-    </header>
-
+    <div class="header">
+        <h1>DevLearn</h1>
+        <div class="xp-card">XP: <span id="total-xp">0</span></div>
+    </div>
     <div class="grid" id="container"></div>
 
     <script type="module">
         import { languages } from './js/data.languages.js';
-        
-        // Tampilkan XP dari LocalStorage
         const progress = JSON.parse(localStorage.getItem('devlearn_xp')) || { totalXP: 0 };
         document.getElementById('total-xp').innerText = progress.totalXP;
 
         const container = document.getElementById('container');
         container.innerHTML = languages.map(lang => `
             <div class="card">
-                <div class="icon">${lang.icon}</div>
-                <h3 style="margin:0; font-size: 1rem;">${lang.title}</h3>
+                <div style="font-size: 2rem">${lang.icon}</div>
+                <h3>${lang.title}</h3>
                 <button class="btn" onclick="location.href='learn.html?id=${lang.id}'">Belajar</button>
             </div>
         `).join('');
