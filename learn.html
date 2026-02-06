@@ -3,236 +3,204 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevQuiz - Learning Session</title>
+    <title>DevQuiz Premium - Learning</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --primary: #2563eb;
-            --danger: #dc2626;
-            --success: #16a34a;
-            --dark: #1e293b;
-            --bg: #f8fafc;
-            --text-secondary: #64748b;
-            --code-bg: #1e1e1e;
+            --p: #6366f1; /* Indigo */
+            --s: #10b981; /* Success Green */
+            --bg: #0f172a; /* Dark Navy */
+            --card: #1e293b;
+            --txt: #f8fafc;
+            --txt-mute: #94a3b8;
         }
 
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg);
+            background-image: radial-gradient(circle at top right, #1e1b4b, var(--bg));
+            color: var(--txt);
             margin: 0;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            color: var(--dark);
-        }
-
-        .quiz-container {
-            background: white;
-            width: 90%;
-            max-width: 500px;
-            padding: 32px;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            text-align: center;
-        }
-
-        /* Header & Progress */
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .hearts { color: var(--danger); font-weight: 700; font-size: 1.2rem; }
-        .progress-bar { background: #e2e8f0; height: 10px; border-radius: 5px; margin-bottom: 30px; overflow: hidden; }
-        #progress-fill { background: var(--primary); height: 100%; width: 0%; transition: 0.4s ease; }
-
-        /* Content Styles */
-        .title { font-size: 1.5rem; font-weight: 800; margin-bottom: 15px; color: var(--dark); }
-        .question { font-size: 1.25rem; font-weight: 600; margin-bottom: 25px; line-height: 1.5; }
-        .description { color: var(--text-secondary); text-align: left; line-height: 1.6; margin-bottom: 20px; font-size: 0.95rem; }
-
-        /* Code Block */
-        .code-block {
-            background: var(--code-bg);
-            color: #dcdcaa;
             padding: 20px;
-            border-radius: 12px;
-            text-align: left;
-            font-family: 'Fira Code', monospace;
-            font-size: 0.85rem;
-            margin-bottom: 25px;
-            overflow-x: auto;
-            white-space: pre;
-            border-left: 4px solid var(--primary);
         }
 
-        /* Options Grid */
-        .options-grid { display: grid; gap: 12px; }
-        .option-btn {
-            padding: 16px;
-            border: 2px solid #f1f5f9;
+        /* Nav Header */
+        .nav {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .exit-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            padding: 8px 15px;
             border-radius: 12px;
-            background: white;
             cursor: pointer;
-            font-size: 1rem;
-            font-weight: 500;
-            transition: all 0.2s;
-            text-align: left;
-            color: var(--dark);
+            text-decoration: none;
+            font-size: 0.9rem;
         }
-        .option-btn:hover:not(:disabled) { background: #f8fafc; border-color: var(--primary); transform: translateX(5px); }
-        .correct { background: var(--success) !important; color: white !important; border-color: var(--success) !important; }
-        .wrong { background: var(--danger) !important; color: white !important; border-color: var(--danger) !important; }
 
-        /* Global Buttons */
-        .btn-main { background: var(--primary); color: white; padding: 16px; border-radius: 12px; border: none; font-weight: 700; width: 100%; cursor: pointer; margin-top: 10px; font-size: 1rem; transition: 0.3s; }
-        .btn-main:hover { opacity: 0.9; }
-        .btn-secondary { background: transparent; color: var(--text-secondary); padding: 12px; border: 1px solid #e2e8f0; border-radius: 12px; width: 100%; cursor: pointer; margin-top: 12px; font-weight: 500; }
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            max-width: 600px;
+            background: rgba(255,255,255,0.1);
+            height: 12px;
+            border-radius: 20px;
+            margin-bottom: 40px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        #fill {
+            height: 100%;
+            background: linear-gradient(90deg, #6366f1, #a855f7);
+            width: 0%;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 20px;
+        }
+
+        /* Quiz Card */
+        .quiz-card {
+            background: var(--card);
+            width: 100%;
+            max-width: 550px;
+            padding: 40px;
+            border-radius: 32px;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .q-text {
+            font-size: 1.4rem;
+            font-weight: 800;
+            line-height: 1.4;
+            margin-bottom: 25px;
+        }
+
+        .code-box {
+            background: #000000;
+            color: #818cf8;
+            padding: 20px;
+            border-radius: 16px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.95rem;
+            margin-bottom: 30px;
+            border-left: 4px solid var(--p);
+            overflow-x: auto;
+        }
+
+        /* Options */
+        .opt-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .opt {
+            background: rgba(255,255,255,0.03);
+            border: 2px solid rgba(255,255,255,0.08);
+            color: var(--txt);
+            padding: 18px 24px;
+            border-radius: 18px;
+            text-align: left;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .opt:hover:not(:disabled) {
+            background: rgba(99, 102, 241, 0.1);
+            border-color: var(--p);
+            transform: scale(1.02);
+        }
+
+        .correct { 
+            background: rgba(16, 185, 129, 0.2) !important; 
+            border-color: var(--s) !important; 
+            color: #34d399 !important;
+        }
+
+        .wrong { 
+            background: rgba(239, 68, 68, 0.2) !important; 
+            border-color: #ef4444 !important; 
+            color: #f87171 !important;
+            animation: shake 0.4s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+
+        /* Result View */
+        .win-ui { text-align: center; display: none; }
+        .win-ui h2 { font-size: 2.5rem; color: var(--s); margin-bottom: 10px; }
+        .xp-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: #000;
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 1.2rem;
+            margin: 20px 0;
+        }
+
+        .btn-continue {
+            background: var(--p);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 20px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.3s;
+        }
+
+        .btn-continue:hover { opacity: 0.9; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(99,102,241,0.4); }
     </style>
 </head>
 <body>
 
-<div class="quiz-container" id="main-content">
+    <div class="nav">
+        <a href="index.html" class="exit-btn">✕ Keluar</a>
+        <div style="font-weight: 800; color: var(--txt-mute);" id="lang-label">JAVASCRIPT</div>
+        <div id="lives-display">❤️ 3</div>
     </div>
 
-<script type="module">
-    import { languages } from './js/data.languages.js';
+    <div class="progress-container">
+        <div id="fill"></div>
+    </div>
 
-    const params = new URLSearchParams(window.location.search);
-    const langId = params.get('lang');
-    const mode = params.get('mode') || 'study'; 
-    const currentLang = languages.find(l => l.id === langId);
-
-    const mainContainer = document.getElementById('main-content');
-
-    if (!currentLang) {
-        window.location.href = 'index.html';
-    }
-
-    // --- MODE BELAJAR (STUDY) ---
-    function renderStudyMode() {
-        mainContainer.innerHTML = `
-            <div class="title">📚 Materi ${currentLang.title}</div>
-            <p class="description">${currentLang.desc}</p>
-            <div class="code-block">${currentLang.codeExample}</div>
-            <button class="btn-main" id="go-to-quiz">Mulai Uji Kemampuan</button>
-            <button class="btn-secondary" onclick="location.href='index.html'">Nanti Saja</button>
-        `;
-
-        document.getElementById('go-to-quiz').onclick = () => {
-            window.location.href = `learn.html?lang=${langId}&mode=quiz`;
-        };
-    }
-
-    // --- MODE KUIS (QUIZ) ---
-    let quizData = [...currentLang.quizBank].sort(() => 0.5 - Math.random()).slice(0, 10);
-    let currentIdx = 0;
-    let lives = 3;
-
-    function renderQuizMode() {
-        mainContainer.innerHTML = `
-            <div class="header">
-                <button onclick="location.href='index.html'" style="border:none; background:none; cursor:pointer; font-size:1.5rem; color:var(--text-secondary);">✕</button>
-                <div class="hearts">❤️ <span id="life-count">${lives}</span></div>
+    <div class="quiz-card" id="quiz-ui">
+        <div class="q-text" id="q-text">Loading question...</div>
+        <div class="code-box" id="q-code">console.log("...")</div>
+        <div class="opt-grid" id="options">
             </div>
-            <div class="progress-bar"><div id="progress-fill"></div></div>
-            <div id="quiz-ui">
-                <div class="question" id="question-text"></div>
-                <div class="options-grid" id="options-container"></div>
-            </div>
-        `;
-        showQuestion();
-    }
+    </div>
 
-    function showQuestion() {
-        const q = quizData[currentIdx];
-        document.getElementById('question-text').innerText = q.q;
-        const container = document.getElementById('options-container');
-        container.innerHTML = '';
+    <div class="quiz-card win-ui" id="win-ui">
+        <div style="font-size: 5rem;">✨</div>
+        <h2>MISSION COMPLETE</h2>
+        <p style="color: var(--txt-mute);">Modul berhasil diselesaikan dengan sempurna.</p>
+        <div class="xp-badge">+100 XP</div>
+        <button class="btn-continue" onclick="location.href='index.html'">Lanjutkan</button>
+    </div>
 
-        q.options.forEach((opt, index) => {
-            const btn = document.createElement('button');
-            btn.className = 'option-btn';
-            btn.innerText = opt;
-            btn.onclick = () => checkAnswer(index, btn);
-            container.appendChild(btn);
-        });
-
-        const progress = (currentIdx / quizData.length) * 100;
-        document.getElementById('progress-fill').style.width = `${progress}%`;
-    }
-
-    function checkAnswer(choice, btn) {
-        const correctAnswer = quizData[currentIdx].answer;
-        const allBtns = document.querySelectorAll('.option-btn');
-        allBtns.forEach(b => b.disabled = true);
-
-        if (choice === correctAnswer) {
-            btn.classList.add('correct');
-            setTimeout(nextQuestion, 800);
-        } else {
-            btn.classList.add('wrong');
-            allBtns[correctAnswer].classList.add('correct');
-            lives--;
-            document.getElementById('life-count').innerText = lives;
-
-            if (lives <= 0) {
-                setTimeout(showGameOver, 800);
-            } else {
-                setTimeout(nextQuestion, 1200);
-            }
-        }
-    }
-
-    function nextQuestion() {
-        currentIdx++;
-        if (currentIdx < quizData.length) {
-            showQuestion();
-        } else {
-            showWin();
-        }
-    }
-
-    function showGameOver() {
-        mainContainer.innerHTML = `
-            <div style="font-size: 4rem; margin-bottom: 10px;">📉</div>
-            <div class="title">Sesi Berakhir</div>
-            <p class="description" style="text-align:center;">Jangan menyerah! Pelajari kembali materinya dan coba lagi.</p>
-            <button class="btn-main" onclick="location.reload()">Coba Lagi</button>
-            <button class="btn-secondary" onclick="location.href='index.html'">Kembali ke Dashboard</button>
-        `;
-    }
-
-    function showWin() {
-        // Ambil data user dari LocalStorage
-        let userData = JSON.parse(localStorage.getItem('devQuiz_user'));
-        
-        // Tambah poin 100 XP
-        const xpGained = 100;
-        userData.score = (userData.score || 0) + xpGained;
-        
-        // Simpan progress modul
-        if (!userData.completed.includes(langId)) {
-            userData.completed.push(langId);
-        }
-        
-        localStorage.setItem('devQuiz_user', JSON.stringify(userData));
-
-        mainContainer.innerHTML = `
-            <div style="font-size: 4rem; margin-bottom: 10px;">🏆</div>
-            <div class="title">Modul Selesai!</div>
-            <p class="description" style="text-align:center;">Kamu telah menguasai dasar ${currentLang.title} dan mendapatkan poin baru.</p>
-            <div style="background: #f0fdf4; padding: 20px; border-radius: 16px; margin-bottom: 25px;">
-                <span style="color: var(--success); font-weight: 800; font-size: 1.5rem;">+${xpGained} XP</span>
-                <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 5px;">Total Skor: ${userData.score} XP</div>
-            </div>
-            <button class="btn-main" style="background: var(--success);" onclick="location.href='index.html'">Lanjut Belajar</button>
-        `;
-    }
-
-    // Inisialisasi awal
-    if (mode === 'study') {
-        renderStudyMode();
-    } else {
-        renderQuizMode();
-    }
-</script>
-
-</body>
+    </body>
     </html>
