@@ -31,53 +31,53 @@
         <button id="btn-done" class="btn-done" disabled>Selesaikan Materi</button>
     </div>
 
-    <script type="module">
-        import { languages } from './js/data.languages.js';
-        const params = new URLSearchParams(window.location.search);
-        const langId = params.get('id');
-        const data = languages.find(l => l.id === langId);
+<script type="module">
+    import { languages } from './js/data.languages.js';
+    const params = new URLSearchParams(window.location.search);
+    const langId = params.get('id');
+    const data = languages.find(l => l.id === langId);
 
-        const btn = document.getElementById('btn-done');
+    const btn = document.getElementById('btn-done');
+    const statusText = document.createElement('p'); // Buat teks status baru
+    statusText.style.textAlign = "center";
+    document.querySelector('.quiz-box').appendChild(statusText);
 
-        if (data) {
-            document.getElementById('title').innerText = data.icon + " " + data.title;
-            document.getElementById('desc').innerText = data.desc;
-            document.getElementById('code-sample').innerText = data.codeExample;
-            document.getElementById('question').innerText = data.quiz.q;
-            
-            document.getElementById('options').innerHTML = data.quiz.options.map((opt, i) => `
-                <button class="opt-btn" onclick="checkAns(${i})">${opt}</button>
-            `).join('');
-        }
+    if (data) {
+        document.getElementById('title').innerText = data.icon + " " + data.title;
+        document.getElementById('desc').innerText = data.desc;
+        document.getElementById('code-sample').innerText = data.codeExample;
+        document.getElementById('question').innerText = data.quiz.q;
+        document.getElementById('options').innerHTML = data.quiz.options.map((opt, i) => `
+            <button class="opt-btn" onclick="checkAns(${i})">${opt}</button>
+        `).join('');
+    }
 
-        // Simpan progress ke LocalStorage
-        let progress = JSON.parse(localStorage.getItem('devlearn_xp')) || { totalXP: 0, completed: [] };
+    let progress = JSON.parse(localStorage.getItem('devlearn_xp')) || { totalXP: 0, completed: [] };
 
-        window.checkAns = (i) => {
-            if (i === data.quiz.answer) {
-                alert("Benar! Tombol selesai aktif.");
-                btn.disabled = false;
-                btn.classList.add('active-done');
-            } else {
-                alert("Salah! Coba lagi.");
-            }
-        };
-
-        btn.onclick = () => {
-            if (!progress.completed.includes(langId)) {
-                progress.totalXP += 10;
-                progress.completed.push(langId);
-                localStorage.setItem('devlearn_xp', JSON.stringify(progress));
-            }
-            location.href = 'index.html';
-        };
-
-        // Jika sudah pernah selesai
-        if (progress.completed.includes(langId)) {
+    window.checkAns = (i) => {
+        if (i === data.quiz.answer) {
+            statusText.innerText = "✅ Jawaban Benar! Tombol aktif.";
+            statusText.style.color = "#22c55e";
             btn.disabled = false;
             btn.classList.add('active-done');
-            btn.innerText = "Sudah Selesai (Kembali)";
+        } else {
+            statusText.innerText = "❌ Salah! Coba lagi ya.";
+            statusText.style.color = "#ef4444";
         }
-    </script>
-</body>
-</html>
+    };
+
+    btn.onclick = () => {
+        if (!progress.completed.includes(langId)) {
+            progress.totalXP += 10;
+            progress.completed.push(langId);
+            localStorage.setItem('devlearn_xp', JSON.stringify(progress));
+        }
+        location.href = 'index.html';
+    };
+
+    if (progress.completed.includes(langId)) {
+        btn.disabled = false;
+        btn.classList.add('active-done');
+        btn.innerText = "Sudah Selesai (Kembali)";
+    }
+</script>
