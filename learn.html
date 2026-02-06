@@ -3,81 +3,231 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Belajar Materi</title>
+    <title>Belajar - DevLearn Pro</title>
+    <link rel="stylesheet" href="css/style.css">
     <style>
-        :root { --p: #6366f1; --bg: #0f172a; }
-        body { background: var(--bg); color: #fff; font-family: sans-serif; padding: 20px; }
-        .content { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; }
-        code { background: #000; color: #4ade80; display: block; padding: 15px; border-radius: 10px; margin: 15px 0; overflow-x: auto; }
-        .quiz-box { background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; margin-top: 20px; }
-        .opt-btn { display: block; width: 100%; padding: 10px; margin: 5px 0; background: #334155; color: #fff; border: none; border-radius: 5px; text-align: left; }
-        .btn-done { background: #475569; color: #fff; border: none; padding: 15px; border-radius: 10px; width: 100%; margin-top: 20px; font-weight: bold; }
-        .active-done { background: #22c55e !important; }
+        :root {
+            --primary: #6366f1;
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f8fafc;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container { max-width: 600px; margin: 0 auto; }
+
+        /* Header Stats */
+        .header-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--card);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #334155;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: #334155;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        #progress-fill {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        /* Quiz Styling */
+        .quiz-card {
+            background: var(--card);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        #q-text { font-size: 1.2rem; margin-bottom: 20px; font-weight: 600; }
+
+        .opt-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            background: #2d3748;
+            color: white;
+            border: 2px solid #4a5568;
+            border-radius: 12px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+
+        .opt-btn:hover {
+            background: #334155;
+            border-color: var(--primary);
+        }
+
+        .opt-btn:active { transform: scale(0.98); }
+
+        /* Shop Area */
+        #shop-area {
+            display: none;
+            text-align: center;
+            background: var(--card);
+            padding: 30px;
+            border-radius: 20px;
+        }
+
+        .btn-shop {
+            background: #eab308;
+            color: #000;
+            padding: 12px 25px;
+            border-radius: 10px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+        }
     </style>
 </head>
 <body>
-    <a href="index.html" style="color: var(--p); text-decoration: none;">← Kembali</a>
-    <div class="content" style="margin-top: 20px;">
-        <h1 id="title"></h1>
-        <p id="desc"></p>
-        <code><pre id="code-sample"></pre></code>
 
-        <div class="quiz-box" id="quiz-container">
-            <h4>Quiz:</h4>
-            <p id="question"></p>
-            <div id="options"></div>
+<div class="container">
+    <div class="header-stats">
+        <span id="stat-hearts">❤️ 5</span>
+        <span id="stat-coins">🪙 0</span>
+        <button onclick="location.href='index.html'" style="background:none; border:none; color:#94a3b8; cursor:pointer;">✖ Keluar</button>
+    </div>
+
+    <div id="quiz-area">
+        <div class="progress-container">
+            <div id="progress-fill"></div>
         </div>
 
-        <button id="btn-done" class="btn-done" disabled>Selesaikan Materi</button>
+        <div class="quiz-card">
+            <p id="q-text">Memuat pertanyaan...</p>
+            <div id="options-area"></div>
+        </div>
     </div>
+
+    <div id="shop-area">
+        <h2>💔 Yah, Nyawa Habis!</h2>
+        <p>Kumpulkan koin lagi atau beli nyawa sekarang.</p>
+        <button class="btn-shop" onclick="buyLife()">Beli 1 Nyawa (20 🪙)</button>
+        <br><br>
+        <a href="index.html" style="color: #94a3b8;">Kembali ke Menu</a>
+    </div>
+</div>
 
 <script type="module">
     import { languages } from './js/data.languages.js';
+
+    // 1. Ambil Data User & Bahasa
     const params = new URLSearchParams(window.location.search);
     const langId = params.get('id');
-    const data = languages.find(l => l.id === langId);
+    const langData = languages.find(l => l.id === langId);
 
-    const btn = document.getElementById('btn-done');
-    const statusText = document.createElement('p'); // Buat teks status baru
-    statusText.style.textAlign = "center";
-    document.querySelector('.quiz-box').appendChild(statusText);
+    let user = JSON.parse(localStorage.getItem('devlearn_pro')) || { 
+        xp: 0, coins: 50, hearts: 5, completed: [] 
+    };
 
-    if (data) {
-        document.getElementById('title').innerText = data.icon + " " + data.title;
-        document.getElementById('desc').innerText = data.desc;
-        document.getElementById('code-sample').innerText = data.codeExample;
-        document.getElementById('question').innerText = data.quiz.q;
-        document.getElementById('options').innerHTML = data.quiz.options.map((opt, i) => `
-            <button class="opt-btn" onclick="checkAns(${i})">${opt}</button>
+    // 2. Acak 5 Soal dari Bank Soal
+    let currentStep = 0;
+    let questions = [...langData.quizBank]
+        .sort(() => 0.5 - Math.random())
+        .slice(0, 5);
+
+    function updateHeader() {
+        document.getElementById('stat-hearts').innerText = `❤️ ${user.hearts}`;
+        document.getElementById('stat-coins').innerText = `🪙 ${user.coins}`;
+    }
+
+    function loadQuestion() {
+        updateHeader();
+        
+        // Cek jika nyawa habis
+        if (user.hearts <= 0) {
+            document.getElementById('quiz-area').style.display = 'none';
+            document.getElementById('shop-area').style.display = 'block';
+            return;
+        }
+
+        const q = questions[currentStep];
+        document.getElementById('q-text').innerText = q.q;
+        
+        // Progress bar
+        const progress = (currentStep / questions.length) * 100;
+        document.getElementById('progress-fill').style.width = `${progress}%`;
+
+        // Render Opsi
+        const optionsHTML = q.options.map((opt, i) => `
+            <button class="opt-btn" onclick="checkAnswer(${i})">${opt}</button>
         `).join('');
+        document.getElementById('options-area').innerHTML = optionsHTML;
     }
 
-    let progress = JSON.parse(localStorage.getItem('devlearn_xp')) || { totalXP: 0, completed: [] };
+    window.checkAnswer = (idx) => {
+        const correctIdx = questions[currentStep].answer;
 
-    window.checkAns = (i) => {
-        if (i === data.quiz.answer) {
-            statusText.innerText = "✅ Jawaban Benar! Tombol aktif.";
-            statusText.style.color = "#22c55e";
-            btn.disabled = false;
-            btn.classList.add('active-done');
+        if (idx === correctIdx) {
+            currentStep++;
+            user.coins += 2; // Bonus koin tiap jawaban benar
+            
+            if (currentStep >= questions.length) {
+                alert("🎉 Selamat! Kamu menyelesaikan modul ini!");
+                user.xp += 50;
+                if (!user.completed.includes(langId)) user.completed.push(langId);
+                saveAndExit();
+            } else {
+                loadQuestion();
+            }
         } else {
-            statusText.innerText = "❌ Salah! Coba lagi ya.";
-            statusText.style.color = "#ef4444";
+            user.hearts -= 1;
+            alert("❌ Jawaban Salah!");
+            saveData();
+            loadQuestion();
         }
     };
 
-    btn.onclick = () => {
-        if (!progress.completed.includes(langId)) {
-            progress.totalXP += 10;
-            progress.completed.push(langId);
-            localStorage.setItem('devlearn_xp', JSON.stringify(progress));
+    window.buyLife = () => {
+        if (user.coins >= 20) {
+            user.coins -= 20;
+            user.hearts += 1;
+            saveData();
+            document.getElementById('quiz-area').style.display = 'block';
+            document.getElementById('shop-area').style.display = 'none';
+            loadQuestion();
+        } else {
+            alert("Koin tidak cukup!");
         }
-        location.href = 'index.html';
     };
 
-    if (progress.completed.includes(langId)) {
-        btn.disabled = false;
-        btn.classList.add('active-done');
-        btn.innerText = "Sudah Selesai (Kembali)";
+    function saveData() {
+        localStorage.setItem('devlearn_pro', JSON.stringify(user));
     }
+
+    function saveAndExit() {
+        saveData();
+        location.href = 'index.html';
+    }
+
+    // Jalankan pertama kali
+    loadQuestion();
 </script>
+
+</body>
+</html>
