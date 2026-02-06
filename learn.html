@@ -41,6 +41,35 @@
         } else {
             document.getElementById('title').innerText = "Oops! Materi tidak ketemu.";
         }
+const btnDone = document.getElementById('btn-done');
+const msg = document.getElementById('status-msg');
+
+btnDone.addEventListener('click', () => {
+    // 1. Ambil data lama dari LocalStorage (kalau ada)
+    let progress = JSON.parse(localStorage.getItem('devlearn_xp')) || { totalXP: 0, completed: [] };
+
+    // 2. Cek apakah bahasa ini sudah pernah diselesaikan
+    if (!progress.completed.includes(langId)) {
+        progress.totalXP += 10;
+        progress.completed.push(langId);
+        
+        // 3. Simpan kembali ke LocalStorage
+        localStorage.setItem('devlearn_xp', JSON.stringify(progress));
+        
+        msg.style.display = 'block';
+        btnDone.innerText = 'Sudah Diselesaikan';
+        btnDone.style.background = '#475569';
+        btnDone.disabled = true;
+    }
+});
+
+// Cek saat halaman dibuka, kalau sudah pernah selesai, tombolnya mati
+let currentProgress = JSON.parse(localStorage.getItem('devlearn_xp'));
+if (currentProgress && currentProgress.completed.includes(langId)) {
+    btnDone.innerText = 'Sudah Diselesaikan';
+    btnDone.style.background = '#475569';
+    btnDone.disabled = true;
+}
     </script>
 </body>
 </html>
