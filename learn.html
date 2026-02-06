@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Belajar Materi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --p: #6366f1; --bg: #0f172a; --card: rgba(255,255,255,0.05); }
+        body { background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; padding: 20px; }
+        .back-btn { color: var(--p); text-decoration: none; display: inline-block; margin-bottom: 20px; }
+        .content-card { background: var(--card); padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); }
+        code { background: #000; color: #0f0; padding: 10px; display: block; border-radius: 8px; margin-top: 10px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-btn">← Kembali</a>
+    
+    <div id="materi-container" class="content-card">
+        <h1 id="title">Memuat...</h1>
+        <p id="desc"></p>
+        <hr style="border: 0.5px solid rgba(255,255,255,0.1); margin: 20px 0;">
+        <h3>Contoh Kode:</h3>
+        <code id="code-sample">// kode akan muncul di sini</code>
+    </div>
+
+    <script type="module">
+        import { languages } from './js/data.languages.js';
+        
+        // Ambil ID dari URL
+        const params = new URLSearchParams(window.location.search);
+        const langId = params.get('id');
+
+        // Cari data bahasa yang cocok
+        const data = languages.find(l => l.id === langId);
+
+        if (data) {
+            document.getElementById('title').innerText = data.icon + " " + data.title;
+            document.getElementById('desc').innerText = data.desc;
+            document.getElementById('code-sample').innerText = data.codeExample || "// Belum ada contoh kode.";
+        } else {
+            document.getElementById('title').innerText = "Oops! Materi tidak ketemu.";
+        }
+    </script>
+</body>
+</html>
