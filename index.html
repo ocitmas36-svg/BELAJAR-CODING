@@ -3,189 +3,251 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevQuiz - Developer Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-    
+    <title>DevQuiz - Dashboard & Leaderboard</title>
     <style>
         :root {
-            --bg: #0b0f1a;
-            --card: #161e2d;
-            --p: #6366f1;
-            --s: #10b981;
-            --txt: #f8fafc;
-            --txt-mute: #94a3b8;
+            --primary: #2563eb;
+            --secondary: #64748b;
+            --success: #16a34a;
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --dark: #1e293b;
         }
-
-        * { box-sizing: border-box; }
 
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Inter', system-ui, sans-serif;
             background-color: var(--bg);
-            background-image: 
-                radial-gradient(circle at 0% 0%, rgba(99, 102, 241, 0.15) 0%, transparent 25%),
-                radial-gradient(circle at 100% 100%, rgba(16, 185, 129, 0.1) 0%, transparent 25%);
-            color: var(--txt);
             margin: 0;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            color: var(--dark);
         }
 
-        .container {
-            width: 100%;
-            max-width: 900px;
-            padding: 40px 20px;
+        /* Login Overlay */
+        #login-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.9);
+            display: none; justify-content: center; align-items: center; z-index: 9999;
         }
 
-        /* HEADER & PROFIL */
+        .login-card {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 350px;
+        }
+
+        /* Layout Dashboard */
         header {
+            background: var(--white);
+            padding: 20px 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(10px);
-            padding: 20px 30px;
-            border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            margin-bottom: 40px;
+            border-bottom: 1px solid #e2e8f0;
         }
 
-        .user-meta h1 { margin: 0; font-size: 1.5rem; font-weight: 800; color: var(--p); }
-        .user-meta p { margin: 5px 0 0; color: var(--txt-mute); font-size: 0.9rem; }
-
-        .stats-badge {
-            background: rgba(99, 102, 241, 0.1);
-            border: 1px solid var(--p);
-            padding: 10px 20px;
-            border-radius: 14px;
-            text-align: center;
-        }
-        #user-xp { display: block; font-weight: 800; color: var(--p); font-size: 1.1rem; }
-        .stats-badge small { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; }
-
-        /* HERO SECTION */
-        .hero { text-align: center; margin-bottom: 50px; }
-        .hero h2 { font-size: 2.5rem; margin-bottom: 10px; font-weight: 800; }
-        .hero p { color: var(--txt-mute); font-size: 1.1rem; }
-
-        /* GRID BAHASA */
-        .lang-grid {
+        .container {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 0 20px;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .container { grid-template-columns: 1fr; }
+        }
+
+        /* Language Grid */
+        .grid-languages {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             gap: 20px;
         }
 
         .card {
-            background: var(--card);
-            padding: 30px;
-            border-radius: 28px;
-            text-decoration: none;
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            position: relative;
-            overflow: hidden;
+            background: var(--white);
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            border: 1px solid #e2e8f0;
         }
 
         .card:hover {
-            transform: translateY(-10px);
-            border-color: var(--p);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-            background: linear-gradient(145deg, #1e293b, #161e2d);
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
         }
 
-        .card img { width: 50px; height: 50px; margin-bottom: 20px; }
-        .card h3 { margin: 0; font-size: 1.4rem; font-weight: 700; }
-        .card p { color: var(--txt-mute); font-size: 0.9rem; margin: 10px 0 20px; }
-
-        .btn-play {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 10px 20px;
-            border-radius: 12px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--p);
-            border: 1px solid rgba(99, 102, 241, 0.3);
+        /* Leaderboard Style */
+        .leaderboard {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid #e2e8f0;
+            height: fit-content;
         }
 
-        .card:hover .btn-play {
-            background: var(--p);
+        .leader-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .rank {
+            width: 30px;
+            font-weight: bold;
+            color: var(--secondary);
+        }
+
+        .rank-1 { color: #eab308; } /* Gold */
+
+        /* Inputs & Buttons */
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 15px 0;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
             color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
         }
 
-        /* Responsive Mobile */
-        @media (max-width: 600px) {
-            .hero h2 { font-size: 1.8rem; }
-            header { flex-direction: column; gap: 20px; text-align: center; }
+        .xp-badge {
+            background: #dbeafe;
+            color: var(--primary);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <header>
-            <div class="user-meta">
-                <h1 id="display-name">Guest Player</h1>
-                <p>Status: <span style="color: var(--s);">Senior Junior</span></p>
-            </div>
-            <div class="stats-badge">
-                <span id="user-xp">0</span>
-                <small>XP Earned</small>
-            </div>
-        </header>
-
-        <div class="hero">
-            <h2>Pilih Bahasa, <br>Uji Logika.</h2>
-            <p>Jadilah developer handal dengan menjawab tantangan harian.</p>
-        </div>
-
-        <div class="lang-grid">
-            <a href="learn.html?lang=html" class="card">
-                <img src="https://cdn-icons-png.flaticon.com/512/732/732212.png" alt="HTML">
-                <h3>HTML Core</h3>
-                <p>Struktur dasar web, tag semantik, dan optimasi elemen.</p>
-                <div class="btn-play">Mulai Modul</div>
-            </a>
-
-            <a href="learn.html?lang=js" class="card">
-                <img src="https://cdn-icons-png.flaticon.com/512/5968/5968292.png" alt="JS">
-                <h3>Logic JS</h3>
-                <p>Manipulasi DOM, variabel, dan alur logika pemrograman.</p>
-                <div class="btn-play">Mulai Modul</div>
-            </a>
-
-            <a href="learn.html?lang=css" class="card">
-                <img src="https://cdn-icons-png.flaticon.com/512/732/732190.png" alt="CSS">
-                <h3>Styling Pro</h3>
-                <p>Layouting modern, Flexbox, Grid, dan animasi keren.</p>
-                <div class="btn-play">Mulai Modul</div>
-            </a>
-        </div>
+<div id="login-overlay">
+    <div class="login-card">
+        <div style="font-size: 3rem; margin-bottom: 10px;">👨‍💻</div>
+        <h2 style="margin:0;">Selamat Datang</h2>
+        <p style="color:var(--secondary);">Mulai perjalanan codingmu hari ini.</p>
+        <input type="text" id="username-input" placeholder="Masukkan Username...">
+        <button class="btn-primary" onclick="handleLogin()">Masuk</button>
     </div>
+</div>
 
-    <script>
-        // Inisialisasi Data User di LocalStorage
-        function loadUserData() {
-            let userData = JSON.parse(localStorage.getItem('dq_user'));
-            
-            // Jika user baru pertama kali datang
-            if (!userData) {
-                const name = prompt("Masukkan Nama Dev kamu:", "Coder") || "Guest";
-                userData = { name: name, xp: 0 };
-                localStorage.setItem('dq_user', JSON.stringify(userData));
-            }
+<header>
+    <h2 style="margin:0; color:var(--primary);">🚀 DevQuiz</h2>
+    <div id="user-info" style="font-weight: 500;">
+        <span id="display-name">Guest</span> 
+        <span class="xp-badge"><span id="display-score">0</span> XP</span>
+    </div>
+</header>
 
-            // Tampilkan ke UI
-            document.getElementById('display-name').innerText = userData.name;
-            document.getElementById('user-xp').innerText = userData.xp.toLocaleString();
+<div class="container">
+    <section>
+        <h3 style="margin-top:0;">📚 Pilih Materi</h3>
+        <div class="grid-languages" id="language-list"></div>
+    </section>
+
+    <aside>
+        <div class="leaderboard">
+            <h3 style="margin-top:0; display:flex; align-items:center; gap:10px;">
+                🏆 Papan Peringkat
+            </h3>
+            <div id="leaderboard-content">
+                </div>
+        </div>
+    </aside>
+</div>
+
+<script type="module">
+    import { languages } from './js/data.languages.js';
+
+    // 1. Cek Login
+    function initApp() {
+        const user = localStorage.getItem('devQuiz_user');
+        if (!user) {
+            document.getElementById('login-overlay').style.display = 'flex';
+        } else {
+            const data = JSON.parse(user);
+            document.getElementById('display-name').innerText = data.name;
+            document.getElementById('display-score').innerText = data.score || 0;
+            renderLanguages();
+            renderLeaderboard();
         }
+    }
 
-        // Jalankan saat load
-        window.onload = loadUserData;
-    </script>
+    // 2. Handle Login
+    window.handleLogin = function() {
+        const input = document.getElementById('username-input').value;
+        if (input.trim().length < 3) return alert("Nama minimal 3 karakter!");
+        
+        const userData = {
+            name: input,
+            score: 0,
+            completed: []
+        };
+        localStorage.setItem('devQuiz_user', JSON.stringify(userData));
+        location.reload();
+    }
+
+    // 3. Render Kartu Bahasa
+    function renderLanguages() {
+        const list = document.getElementById('language-list');
+        list.innerHTML = languages.map(lang => `
+            <div class="card" onclick="location.href='learn.html?lang=${lang.id}'">
+                <div style="font-size: 2.5rem; margin-bottom: 10px;">${lang.icon}</div>
+                <div style="font-weight: bold;">${lang.title}</div>
+                <div style="font-size: 0.8rem; color: var(--secondary); margin-top: 5px;">20 Soal</div>
+            </div>
+        `).join('');
+    }
+
+    // 4. Render Leaderboard (Simulasi)
+    function renderLeaderboard() {
+        const currentUser = JSON.parse(localStorage.getItem('devQuiz_user'));
+        
+        // Data Dummy + User Asli
+        let players = [
+            { name: "Ocit Master", score: 2500 },
+            { name: "Andi Tech", score: 1800 },
+            { name: "Siti Dev", score: 1200 },
+            { name: currentUser.name, score: currentUser.score || 0 }
+        ];
+
+        // Sort descending
+        players.sort((a, b) => b.score - a.score);
+
+        const container = document.getElementById('leaderboard-content');
+        container.innerHTML = players.map((p, i) => `
+            <div class="leader-row" style="${p.name === currentUser.name ? 'background:#f0f7ff; margin:0 -10px; padding:12px 10px; border-radius:8px;' : ''}">
+                <div>
+                    <span class="rank ${i === 0 ? 'rank-1' : ''}">#${i + 1}</span>
+                    <span style="font-weight: ${p.name === currentUser.name ? 'bold' : '500'}">${p.name}</span>
+                </div>
+                <div style="font-weight: bold; color: var(--primary);">${p.score}</div>
+            </div>
+        `).join('');
+    }
+
+    initApp();
+</script>
 </body>
     </html>
