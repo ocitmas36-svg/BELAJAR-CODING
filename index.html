@@ -3,135 +3,251 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevQuiz - Belajar Coding</title>
+    <title>DevQuiz - Dashboard & Leaderboard</title>
     <style>
         :root {
-            --primary: #4a90e2;
-            --dark: #2c3e50;
-            --bg: #f0f2f5;
+            --primary: #2563eb;
+            --secondary: #64748b;
+            --success: #16a34a;
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --dark: #1e293b;
         }
 
         body {
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Inter', system-ui, sans-serif;
             background-color: var(--bg);
             margin: 0;
             color: var(--dark);
         }
 
-        header {
-            background: white;
-            padding: 2rem 1rem;
+        /* Login Overlay */
+        #login-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.9);
+            display: none; justify-content: center; align-items: center; z-index: 9999;
+        }
+
+        .login-card {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
             text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            width: 90%;
+            max-width: 350px;
+        }
+
+        /* Layout Dashboard */
+        header {
+            background: var(--white);
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e2e8f0;
         }
 
         .container {
-            max-width: 1000px;
-            margin: 2rem auto;
-            padding: 0 1rem;
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
         }
 
+        @media (max-width: 900px) {
+            .container { grid-template-columns: 1fr; }
+        }
+
+        /* Language Grid */
         .grid-languages {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             gap: 20px;
         }
 
-        .lang-card {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
+        .card {
+            background: var(--white);
+            padding: 24px;
+            border-radius: 16px;
             text-align: center;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            border: 2px solid transparent;
-            position: relative;
+            transition: 0.3s;
+            border: 1px solid #e2e8f0;
         }
 
-        .lang-card:hover {
+        .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
             border-color: var(--primary);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
         }
 
-        .lang-icon {
-            font-size: 3rem;
-            margin-bottom: 10px;
-            display: block;
+        /* Leaderboard Style */
+        .leaderboard {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid #e2e8f0;
+            height: fit-content;
         }
 
-        .lang-title {
+        .leader-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .rank {
+            width: 30px;
             font-weight: bold;
-            font-size: 1.1rem;
+            color: var(--secondary);
         }
 
-        /* Badge jika sudah selesai */
-        .badge-done {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #2ecc71;
+        .rank-1 { color: #eab308; } /* Gold */
+
+        /* Inputs & Buttons */
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 15px 0;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
             color: white;
-            font-size: 0.7rem;
-            padding: 2px 8px;
-            border-radius: 10px;
-            display: none;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
         }
 
-        .is-completed .badge-done {
-            display: block;
-        }
-
-        .stats {
-            margin-top: 10px;
-            font-size: 0.8rem;
-            color: #7f8c8d;
+        .xp-badge {
+            background: #dbeafe;
+            color: var(--primary);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
 
+<div id="login-overlay">
+    <div class="login-card">
+        <div style="font-size: 3rem; margin-bottom: 10px;">👨‍💻</div>
+        <h2 style="margin:0;">Selamat Datang</h2>
+        <p style="color:var(--secondary);">Mulai perjalanan codingmu hari ini.</p>
+        <input type="text" id="username-input" placeholder="Masukkan Username...">
+        <button class="btn-primary" onclick="handleLogin()">Masuk</button>
+    </div>
+</div>
+
 <header>
-    <h1>🚀 DevQuiz</h1>
-    <p>Pilih bahasa pemrograman untuk mulai belajar</p>
+    <h2 style="margin:0; color:var(--primary);">🚀 DevQuiz</h2>
+    <div id="user-info" style="font-weight: 500;">
+        <span id="display-name">Guest</span> 
+        <span class="xp-badge"><span id="display-score">0</span> XP</span>
+    </div>
 </header>
 
 <div class="container">
-    <div class="grid-languages" id="language-list">
+    <section>
+        <h3 style="margin-top:0;">📚 Pilih Materi</h3>
+        <div class="grid-languages" id="language-list"></div>
+    </section>
+
+    <aside>
+        <div class="leaderboard">
+            <h3 style="margin-top:0; display:flex; align-items:center; gap:10px;">
+                🏆 Papan Peringkat
+            </h3>
+            <div id="leaderboard-content">
+                </div>
         </div>
+    </aside>
 </div>
 
 <script type="module">
     import { languages } from './js/data.languages.js';
 
-    function initHome() {
-        const listContainer = document.getElementById('language-list');
-        
-        // Ambil data progress dari localStorage
-        const userData = JSON.parse(localStorage.getItem('devQuiz_user')) || { completed: [] };
-
-        languages.forEach(lang => {
-            const isDone = userData.completed.includes(lang.id);
-            
-            const card = document.createElement('div');
-            card.className = `lang-card ${isDone ? 'is-completed' : ''}`;
-            card.onclick = () => {
-                window.location.href = `learn.html?lang=${lang.id}`;
-            };
-
-            card.innerHTML = `
-                <span class="badge-done">LULUS</span>
-                <span class="lang-icon">${lang.icon}</span>
-                <div class="lang-title">${lang.title}</div>
-                <div class="stats">20 Soal</div>
-            `;
-
-            listContainer.appendChild(card);
-        });
+    // 1. Cek Login
+    function initApp() {
+        const user = localStorage.getItem('devQuiz_user');
+        if (!user) {
+            document.getElementById('login-overlay').style.display = 'flex';
+        } else {
+            const data = JSON.parse(user);
+            document.getElementById('display-name').innerText = data.name;
+            document.getElementById('display-score').innerText = data.score || 0;
+            renderLanguages();
+            renderLeaderboard();
+        }
     }
 
-    initHome();
-</script>
+    // 2. Handle Login
+    window.handleLogin = function() {
+        const input = document.getElementById('username-input').value;
+        if (input.trim().length < 3) return alert("Nama minimal 3 karakter!");
+        
+        const userData = {
+            name: input,
+            score: 0,
+            completed: []
+        };
+        localStorage.setItem('devQuiz_user', JSON.stringify(userData));
+        location.reload();
+    }
 
+    // 3. Render Kartu Bahasa
+    function renderLanguages() {
+        const list = document.getElementById('language-list');
+        list.innerHTML = languages.map(lang => `
+            <div class="card" onclick="location.href='learn.html?lang=${lang.id}'">
+                <div style="font-size: 2.5rem; margin-bottom: 10px;">${lang.icon}</div>
+                <div style="font-weight: bold;">${lang.title}</div>
+                <div style="font-size: 0.8rem; color: var(--secondary); margin-top: 5px;">20 Soal</div>
+            </div>
+        `).join('');
+    }
+
+    // 4. Render Leaderboard (Simulasi)
+    function renderLeaderboard() {
+        const currentUser = JSON.parse(localStorage.getItem('devQuiz_user'));
+        
+        // Data Dummy + User Asli
+        let players = [
+            { name: "Ocit Master", score: 2500 },
+            { name: "Andi Tech", score: 1800 },
+            { name: "Siti Dev", score: 1200 },
+            { name: currentUser.name, score: currentUser.score || 0 }
+        ];
+
+        // Sort descending
+        players.sort((a, b) => b.score - a.score);
+
+        const container = document.getElementById('leaderboard-content');
+        container.innerHTML = players.map((p, i) => `
+            <div class="leader-row" style="${p.name === currentUser.name ? 'background:#f0f7ff; margin:0 -10px; padding:12px 10px; border-radius:8px;' : ''}">
+                <div>
+                    <span class="rank ${i === 0 ? 'rank-1' : ''}">#${i + 1}</span>
+                    <span style="font-weight: ${p.name === currentUser.name ? 'bold' : '500'}">${p.name}</span>
+                </div>
+                <div style="font-weight: bold; color: var(--primary);">${p.score}</div>
+            </div>
+        `).join('');
+    }
+
+    initApp();
+</script>
 </body>
-</html>
+        </html>
