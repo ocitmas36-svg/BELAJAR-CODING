@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevQuiz Premium - Learning Mode</title>
+    <title>DevQuiz - Professional Mode</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     
     <style>
         :root {
             --p: #6366f1; --s: #10b981; --bg: #0f172a;
             --card: #1e293b; --txt: #f8fafc; --txt-mute: #94a3b8;
+            --danger: #ef4444;
         }
 
         body {
@@ -17,102 +18,99 @@
             background-color: var(--bg);
             background-image: radial-gradient(circle at top right, #1e1b4b, var(--bg));
             color: var(--txt);
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
+            margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 20px;
         }
 
         .nav { width: 100%; max-width: 600px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
         .exit-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 8px 15px; border-radius: 12px; cursor: pointer; text-decoration: none; font-size: 0.9rem; }
 
-        .progress-container { width: 100%; max-width: 600px; background: rgba(255,255,255,0.1); height: 12px; border-radius: 20px; margin-bottom: 30px; overflow: hidden; }
-        #fill { height: 100%; background: linear-gradient(90deg, #6366f1, #a855f7); width: 0%; transition: 0.5s; }
+        .progress-container { width: 100%; max-width: 600px; background: rgba(255,255,255,0.1); height: 8px; border-radius: 20px; margin-bottom: 30px; overflow: hidden; }
+        #fill { height: 100%; background: var(--p); width: 0%; transition: 0.5s; }
 
-        .quiz-card { background: var(--card); width: 100%; max-width: 550px; padding: 35px; border-radius: 32px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); box-sizing: border-box; }
-        .q-text { font-size: 1.3rem; font-weight: 800; margin-bottom: 20px; }
-        .code-box { background: #000; color: #818cf8; padding: 20px; border-radius: 16px; font-family: 'Fira Code', monospace; font-size: 0.9rem; margin-bottom: 25px; border-left: 4px solid var(--p); white-space: pre-wrap; }
+        .quiz-card { background: var(--card); width: 100%; max-width: 550px; padding: 35px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); box-sizing: border-box; }
+        .q-text { font-size: 1.25rem; font-weight: 700; margin-bottom: 20px; }
+        .code-box { background: #000; color: #818cf8; padding: 20px; border-radius: 12px; font-family: 'Fira Code', monospace; font-size: 0.9rem; margin-bottom: 25px; border-left: 4px solid var(--p); white-space: pre-wrap; }
 
-        .opt-grid { display: grid; gap: 10px; }
-        .opt { background: rgba(255,255,255,0.03); border: 2px solid rgba(255,255,255,0.08); color: var(--txt); padding: 16px; border-radius: 16px; text-align: left; font-size: 1rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
-        .opt:hover:not(:disabled) { background: rgba(99, 102, 241, 0.1); border-color: var(--p); }
+        .opt-grid { display: grid; gap: 12px; }
+        .opt { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); color: var(--txt); padding: 16px; border-radius: 12px; text-align: left; font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: 0.2s; }
+        .opt:hover:not(:disabled) { border-color: var(--p); background: rgba(99, 102, 241, 0.05); }
         
         .correct { background: rgba(16, 185, 129, 0.2) !important; border-color: var(--s) !important; color: #34d399 !important; }
-        .wrong { background: rgba(239, 68, 68, 0.2) !important; border-color: #ef4444 !important; color: #f87171 !important; animation: shake 0.4s; }
+        .wrong { background: rgba(239, 68, 68, 0.2) !important; border-color: var(--danger) !important; color: #f87171 !important; }
 
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
-
-        .win-ui { text-align: center; display: none; }
-        .xp-badge { display: inline-block; background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #000; padding: 10px 25px; border-radius: 50px; font-weight: 800; margin: 20px 0; }
-        .btn-continue { background: var(--p); color: white; border: none; padding: 18px; border-radius: 20px; font-size: 1.1rem; font-weight: 800; cursor: pointer; width: 100%; }
+        /* Modal Kekalahan */
+        #death-screen {
+            display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.95);
+            z-index: 100; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px;
+        }
+        .death-box { background: #1e293b; padding: 40px; border-radius: 30px; border: 2px solid var(--danger); max-width: 400px; }
     </style>
 </head>
 <body>
 
     <div class="nav">
-        <a href="index.html" class="exit-btn">✕ Keluar</a>
-        <div style="font-weight: 800; color: var(--txt-mute);" id="lang-label">LEARNING</div>
-        <div></div>
+        <a href="index.html" class="exit-btn">✕ Terminate</a>
+        <div id="lang-label" style="font-weight: 800; opacity: 0.5;">MODULE</div>
     </div>
 
-    <div class="progress-container">
-        <div id="fill"></div>
-    </div>
+    <div class="progress-container"><div id="fill"></div></div>
 
     <div class="quiz-card" id="quiz-ui">
-        <div class="q-text" id="q-text">Memuat soal...</div>
+        <div class="q-text" id="q-text">System initializing...</div>
         <div class="code-box" id="q-code"></div>
         <div class="opt-grid" id="options"></div>
     </div>
 
-    <div class="quiz-card win-ui" id="win-ui">
-        <div style="font-size: 4rem;">🏆</div>
-        <h2 style="font-size: 2rem; color: var(--s);">MODUL SELESAI!</h2>
-        <p id="win-name" style="font-weight: 600;"></p>
-        <div class="xp-badge">+100 XP</div>
-        <button class="btn-continue" onclick="location.href='index.html'">Ambil Reward</button>
+    <div id="death-screen">
+        <div class="death-box">
+            <h1 style="color: var(--danger); font-size: 3rem; margin: 0;">ERROR!</h1>
+            <p style="font-size: 1.2rem; font-weight: 700; margin: 20px 0 10px;">Status: <span style="color: #ff4757;">Rejected by Ocit</span></p>
+            <p style="color: var(--txt-mute); line-height: 1.6;" id="mock-text"></p>
+            <button class="exit-btn" style="margin-top: 30px; width: 100%; padding: 15px;" onclick="location.href='index.html'">Kembali Belajar Sana!</button>
+        </div>
     </div>
 
     <script>
-        // 1. BANK SOAL (Silakan ganti/tambah dengan 20 soalmu)
         const AI_BANK = {
             html: [
-                { q: "Tag manakah yang benar untuk judul terbesar?", code: "<... >Hello World</... >", opts: ["<h6>", "<head>", "<h1>", "<title>"], ans: 2 },
-                { q: "Bagaimana cara membuat list angka?", code: "<... >\n  <li>Item</li>\n</... >", opts: ["<ul>", "<ol>", "<list>", "<dl>"], ans: 1 },
-                { q: "Atribut untuk sumber gambar adalah?", code: "<img ...='foto.jpg'>", opts: ["href", "link", "src", "url"], ans: 2 }
+                { q: "Tag untuk memasukkan file JavaScript eksternal?", code: "<... src='script.js'></...>", opts: ["<js>", "<script>", "<javascript>", "<link>"], ans: 1 },
+                // Tambahkan 20 soalmu di sini...
             ],
             js: [
-                { q: "Apa output dari kode di bawah?", code: "console.log(typeof '10')", opts: ["number", "string", "int", "NaN"], ans: 1 },
-                { q: "Simbol untuk perbandingan nilai & tipe data?", code: "if (a ... b)", opts: ["=", "==", "===", "!=="], ans: 2 }
-            ],
-            css: [
-                { q: "Properti untuk warna latar belakang?", code: ".box {\n  ... : blue;\n}", opts: ["color", "bg-color", "background", "bgcolor"], ans: 2 }
+                { q: "Cara mengecek panjang array?", code: "let arr = [1,2,3];\nconsole.log(arr....);", opts: ["size", "count", "length", "index"], ans: 2 }
             ]
         };
 
+        // Pesan mengejek yang profesional
+        const MOCK_MESSAGES = [
+            "Kode kamu berantakan. Rapikan dulu logika kamu sebelum mencoba lagi.",
+            "Junior developer terdeteksi. Silakan baca dokumentasi lagi, ya.",
+            "Sangat disayangkan. Mungkin ngoding bukan bakat terpendammu?",
+            "Compiler menolak jawabanmu. Terlalu banyak typo di otak?",
+            "Ocit menyarankan kamu pindah ke divisi admin saja."
+        ];
+
         const urlParams = new URLSearchParams(window.location.search);
         const langId = urlParams.get('lang') || 'html';
-        
         let currentStep = 0;
-        const totalSteps = 3; // Kamu bisa ubah jadi 5 atau 10
         let sessionQuestions = [];
 
         function initQuiz() {
-            // Ambil data dari AI_BANK berdasarkan ID di URL
             const source = AI_BANK[langId] || AI_BANK['html'];
-            sessionQuestions = [...source].sort(() => 0.5 - Math.random()).slice(0, totalSteps);
-            
+            sessionQuestions = [...source].sort(() => 0.5 - Math.random()).slice(0, 5);
             document.getElementById('lang-label').innerText = langId.toUpperCase();
             showQuestion();
         }
 
         function showQuestion() {
-            if (currentStep >= sessionQuestions.length) return showWin();
+            if (currentStep >= sessionQuestions.length) {
+                alert("Selamat, kamu lolos review Ocit kali ini.");
+                location.href = 'index.html';
+                return;
+            }
 
             const q = sessionQuestions[currentStep];
-            document.getElementById('fill').style.width = `${(currentStep / totalSteps) * 100}%`;
+            document.getElementById('fill').style.width = (currentStep / 5) * 100 + "%";
             document.getElementById('q-text').innerText = q.q;
             document.getElementById('q-code').innerText = q.code;
 
@@ -130,39 +128,19 @@
 
         function checkAns(idx, btn) {
             const correct = sessionQuestions[currentStep].ans;
-            const all = document.querySelectorAll('.opt');
-            all.forEach(b => b.disabled = true);
-
             if (idx === correct) {
                 btn.classList.add('correct');
-                setTimeout(() => {
-                    currentStep++;
-                    showQuestion();
-                }, 1000);
+                setTimeout(() => { currentStep++; showQuestion(); }, 600);
             } else {
                 btn.classList.add('wrong');
-                all[correct].classList.add('correct');
                 setTimeout(() => {
-                    alert("Salah! Coba lagi dari awal.");
-                    location.reload();
-                }, 1200);
+                    document.getElementById('quiz-ui').style.display = 'none';
+                    document.getElementById('death-screen').style.display = 'flex';
+                    document.getElementById('mock-text').innerText = MOCK_MESSAGES[Math.floor(Math.random() * MOCK_MESSAGES.length)];
+                }, 500);
             }
         }
 
-        function showWin() {
-            document.getElementById('fill').style.width = "100%";
-            document.getElementById('quiz-ui').style.display = 'none';
-            document.getElementById('win-ui').style.display = 'block';
-
-            let userData = JSON.parse(localStorage.getItem('dq_user'));
-            if(userData) {
-                userData.xp += 100;
-                localStorage.setItem('dq_user', JSON.stringify(userData));
-                document.getElementById('win-name').innerText = `Hebat, ${userData.name}!`;
-            }
-        }
-
-        // Jalankan kuis saat page load
         window.onload = initQuiz;
     </script>
 </body>
