@@ -3,82 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Belajar Materi</title>
+    <title>Materi Belajar</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --p: #6366f1; --bg: #0f172a; --card: rgba(255,255,255,0.05); }
-        body { background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; padding: 20px; }
-        .back-btn { color: var(--p); text-decoration: none; display: inline-block; margin-bottom: 20px; }
-        .content-card { background: var(--card); padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); }
-        code { background: #000; color: #0f0; padding: 10px; display: block; border-radius: 8px; margin-top: 10px; overflow-x: auto; }
+        :root { --p: #6366f1; --bg: #0f172a; --card: rgba(255,255,255,0.08); }
+        body { background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; padding: 20px; line-height: 1.6; }
+        .nav { margin-bottom: 20px; }
+        .nav a { color: var(--p); text-decoration: none; font-weight: bold; }
+        .content { background: var(--card); padding: 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); }
+        code { background: #000; color: #4ade80; padding: 15px; display: block; border-radius: 10px; margin: 20px 0; font-family: monospace; overflow-x: auto; white-space: pre; }
+        .btn-done { background: #22c55e; color: white; border: none; padding: 15px; border-radius: 12px; width: 100%; font-weight: bold; font-size: 1rem; cursor: pointer; }
+        .btn-done:disabled { background: #475569; cursor: not-allowed; }
     </style>
 </head>
 <body>
-    <a href="index.html" class="back-btn">← Kembali</a>
+    <div class="nav"><a href="index.html">← Kembali</a></div>
     
-    <div id="materi-container" class="content-card">
-        <h1 id="title">Memuat...</h1>
-        <p id="desc"></p>
-        <hr style="border: 0.5px solid rgba(255,255,255,0.1); margin: 20px 0;">
-        <h3>Contoh Kode:</h3>
-        <code id="code-sample">// kode akan muncul di sini</code>
+    <div class="content">
+        <h1 id="title" style="margin-top:0;">Memuat...</h1>
+        <p id="desc" style="color: #94a3b8;"></p>
+        
+        <h3 style="margin-bottom:5px;">Contoh Kode:</h3>
+        <code id="code-sample"></code>
+
+        <button id="btn-done" class="btn-done">Tandai Selesai (+10 XP)</button>
+        <p id="msg" style="color: #22c55e; text-align: center; display: none; margin-top: 10px;">🎉 Materi selesai!</p>
     </div>
 
     <script type="module">
         import { languages } from './js/data.languages.js';
         
-        // Ambil ID dari URL
         const params = new URLSearchParams(window.location.search);
         const langId = params.get('id');
-
-        // Cari data bahasa yang cocok
         const data = languages.find(l => l.id === langId);
+
+        const btn = document.getElementById('btn-done');
+        const msg = document.getElementById('msg');
 
         if (data) {
             document.getElementById('title').innerText = data.icon + " " + data.title;
             document.getElementById('desc').innerText = data.desc;
-            document.getElementById('code-sample').innerText = data.codeExample || "// Belum ada contoh kode.";
-        } else {
-            document.getElementById('title').innerText = "Oops! Materi tidak ketemu.";
+            document.getElementById('code-sample').innerText = data.codeExample || "// Contoh kode belum tersedia.";
         }
-const btnDone = document.getElementById('btn-done');
-const msg = document.getElementById('status-msg');
 
-btnDone.addEventListener('click', () => {
-    // 1. Ambil data lama dari LocalStorage (kalau ada)
-    let progress = JSON.parse(localStorage.getItem('devlearn_xp')) || { totalXP: 0, completed: [] };
+        // Sistem Progress
+        let progress = JSON.parse(localStorage.getItem('devlearn_xp')) || { totalXP: 0, completed: [] };
 
-    // 2. Cek apakah bahasa ini sudah pernah diselesaikan
-    if (!progress.completed.includes(langId)) {
-        progress.totalXP += 10;
-        progress.completed.push(langId);
-        
-        // 3. Simpan kembali ke LocalStorage
-        localStorage.setItem('devlearn_xp', JSON.stringify(progress));
-        
-        msg.style.display = 'block';
-        btnDone.innerText = 'Sudah Diselesaikan';
-        btnDone.style.background = '#475569';
-        btnDone.disabled = true;
-    }
-});
+        if (progress.completed.includes(langId)) {
+            btn.innerText = "Sudah Diselesaikan";
+            btn.disabled = true;
+        }
 
-// Cek saat halaman dibuka, kalau sudah pernah selesai, tombolnya mati
-let currentProgress = JSON.parse(localStorage.getItem('devlearn_xp'));
-if (currentProgress && currentProgress.completed.includes(langId)) {
-    btnDone.innerText = 'Sudah Diselesaikan';
-    btnDone.style.background = '#475569';
-    btnDone.disabled = true;
-}
+        btn.addEventListener('click', () => {
+            if (!progress.completed.includes(langId)) {
+                progress.totalXP += 10;
+                progress.completed.push(langId);
+                localStorage.setItem('devlearn_xp', JSON.stringify(progress));
+                
+                btn.innerText = "Sudah Diselesaikan";
+                btn.disabled = true;
+                msg.style.display = "block";
+            }
+        });
     </script>
 </body>
 </html>
-<div style="margin-top: 30px;">
-    <button id="btn-done" style="background: #22c55e; color: white; border: none; padding: 12px 20px; border-radius: 10px; width: 100%; font-weight: bold;">
-        Tandai Selesai (+10 XP)
-    </button>
-</div>
-
-<div id="status-msg" style="text-align: center; margin-top: 10px; color: #22c55e; display: none;">
-    🎉 Materi berhasil diselesaikan!
-</div>
